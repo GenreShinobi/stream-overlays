@@ -990,22 +990,31 @@
       }
 
       reset(initial = false) {
+        // Spawn anywhere throughout the entire space (full width and height)
         this.x = Math.random() * width;
-        this.y = initial ? Math.random() * height : height + 15;
-        this.size = 1.2 + Math.random() * 3.2;
-        this.speedY = 0.15 + Math.random() * 0.45;
-        this.driftX = (Math.random() - 0.5) * 0.3;
-        this.alpha = 0;
-        this.maxAlpha = 0.25 + Math.random() * 0.65;
-        this.fadeSpeed = 0.004 + Math.random() * 0.008;
+        this.y = Math.random() * height;
+        this.size = 1.2 + Math.random() * 3.4;
+        
+        // Gentle organic drift with subtle upward thermal float
+        this.speedY = 0.08 + Math.random() * 0.32;
+        this.driftX = (Math.random() - 0.5) * 0.35;
+        
+        this.maxAlpha = 0.22 + Math.random() * 0.65;
+        // On startup randomize alpha so particles are immediately spread; on respawn fade in organically
+        this.alpha = initial ? (Math.random() * this.maxAlpha) : 0;
+        this.fadeSpeed = 0.003 + Math.random() * 0.007;
         this.fadingIn = true;
-        this.oscOffset = Math.random() * Math.PI * 2;
+        this.oscOffsetX = Math.random() * Math.PI * 2;
+        this.oscOffsetY = Math.random() * Math.PI * 2;
       }
 
       update(time) {
-        this.y -= this.speedY * (config.speed * 0.7 + 0.3);
-        this.x += this.driftX + Math.sin(time * 0.0012 + this.oscOffset) * 0.25;
+        const spd = (config.speed * 0.7 + 0.3);
+        this.y -= this.speedY * spd;
+        this.x += (this.driftX + Math.sin(time * 0.0011 + this.oscOffsetX) * 0.32) * spd;
+        this.y += Math.cos(time * 0.0009 + this.oscOffsetY) * 0.22 * spd;
 
+        // Gentle breathing fade in / fade out cycle
         if (this.fadingIn) {
           this.alpha += this.fadeSpeed;
           if (this.alpha >= this.maxAlpha) {
@@ -1013,21 +1022,23 @@
             this.fadingIn = false;
           }
         } else {
-          this.alpha -= this.fadeSpeed * 0.7;
+          this.alpha -= this.fadeSpeed * 0.75;
           if (this.alpha <= 0) {
             this.reset(false);
           }
         }
 
-        if (this.y < -20 || this.x < -20 || this.x > width + 20) {
+        // If particle drifts out of viewport bounds, respawn anywhere in the space
+        if (this.y < -30 || this.y > height + 30 || this.x < -30 || this.x > width + 30) {
           this.reset(false);
         }
       }
 
       render(ctx, baseHue) {
+        if (this.alpha <= 0.005) return;
         ctx.save();
         ctx.fillStyle = `hsla(${baseHue + 15}, 85%, 75%, ${this.alpha})`;
-        ctx.shadowColor = `hsla(${baseHue}, 90%, 65%, ${this.alpha * 0.8})`;
+        ctx.shadowColor = `hsla(${baseHue}, 90%, 65%, ${this.alpha * 0.85})`;
         ctx.shadowBlur = this.size * 3.5;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
