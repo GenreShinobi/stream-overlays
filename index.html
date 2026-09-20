@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cozy Ambient Diffused Light Overlay</title>
-  <meta name="description" content="A warm, cozy, diffused ambient lighting background overlay for TikTok LIVE and OBS streaming.">
+  <meta name="description" content="A warm, cozy, diffused ambient lighting background overlay for TikTok LIVE and OBS streaming with instant cloud synchronization.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     }
 
     :root {
-      --bg-base: #0a0b10;
+      --bg-base: #0d0a09;
       --vignette-strength: 0.65;
       --blur-strength: 100px;
       --particle-opacity: 0.7;
@@ -39,7 +39,7 @@
       height: 100vh;
       overflow: hidden;
       background-color: var(--bg-base);
-      transition: background-color 2.5s ease;
+      transition: background-color 2.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Canvas for Light Orbs */
@@ -51,7 +51,7 @@
       height: 100%;
       filter: blur(var(--blur-strength)) saturate(135%);
       -webkit-filter: blur(var(--blur-strength)) saturate(135%);
-      transform: translate3d(0, 0, 0) scale(1.15); /* Scale slightly so blurred edges cover screen fully */
+      transform: translate3d(0, 0, 0) scale(1.15);
       mix-blend-mode: screen;
       pointer-events: none;
       will-change: transform;
@@ -110,14 +110,14 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
-    /* Interactive Floating Gear Icon (Hidden by default, shows on hover or click) */
+    /* Interactive Floating Gear Icon */
     #settings-toggle-btn {
       position: absolute;
       top: 18px;
       right: 18px;
       z-index: 100;
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: rgba(22, 24, 34, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -127,8 +127,8 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.7);
-      opacity: 0.18;
+      color: rgba(255, 255, 255, 0.75);
+      opacity: 0.22;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
@@ -139,7 +139,7 @@
       transform: scale(1.08) rotate(25deg);
       background: rgba(30, 34, 48, 0.85);
       color: #ffcb2b;
-      border-color: rgba(255, 203, 43, 0.4);
+      border-color: rgba(255, 203, 43, 0.45);
     }
 
     /* Floating Glassmorphism Control Panel */
@@ -148,21 +148,32 @@
       top: 68px;
       right: 18px;
       z-index: 100;
-      width: 320px;
+      width: 350px;
       max-width: calc(100vw - 36px);
-      background: rgba(16, 18, 26, 0.82);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 18px;
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      max-height: calc(100vh - 86px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: rgba(16, 18, 26, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      backdrop-filter: blur(28px) saturate(170%);
+      -webkit-backdrop-filter: blur(28px) saturate(170%);
       padding: 20px 22px;
       color: #f0f2f8;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
       opacity: 0;
       pointer-events: none;
-      transform: translateY(-10px) scale(0.96);
+      transform: translateY(-12px) scale(0.96);
       transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                   transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #control-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    #control-panel::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
     }
 
     #control-panel.open {
@@ -175,8 +186,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -197,22 +208,80 @@
 
     .panel-header .shortcut-badge {
       font-size: 11px;
-      padding: 2px 7px;
+      padding: 2px 8px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 6px;
-      color: rgba(255, 255, 255, 0.55);
+      color: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Live Cloud Sync Bar */
+    .sync-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 7px 12px;
+      margin-bottom: 16px;
+      font-size: 11.5px;
+    }
+
+    .sync-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .status-dot.connected {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse-green 2.4s infinite;
+    }
+
+    .status-dot.connecting {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+      animation: pulse-yellow 1.5s infinite;
+    }
+
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @keyframes pulse-yellow {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    .sync-time-badge {
+      color: rgba(255, 255, 255, 0.45);
+      font-variant-numeric: tabular-nums;
+      font-size: 10.5px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 15px;
     }
 
     .form-group label {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.75);
+      color: rgba(255, 255, 255, 0.8);
       margin-bottom: 8px;
     }
 
@@ -226,19 +295,19 @@
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 7px;
     }
 
     .theme-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;
+      padding: 8px 10px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
       color: rgba(255, 255, 255, 0.85);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -253,14 +322,14 @@
 
     .theme-btn.active {
       background: rgba(255, 203, 43, 0.14);
-      border-color: rgba(255, 203, 43, 0.45);
+      border-color: rgba(255, 203, 43, 0.5);
       color: #ffcb2b;
-      box-shadow: 0 0 12px rgba(255, 203, 43, 0.15);
+      box-shadow: 0 0 12px rgba(255, 203, 43, 0.18);
     }
 
     .theme-preview-dot {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 0 6px rgba(0,0,0,0.5);
@@ -293,19 +362,163 @@
       transform: scale(1.2);
     }
 
+    /* Save & Sync Button */
+    .save-sync-section {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .btn-save-sync {
+      width: 100%;
+      padding: 11px 16px;
+      background: linear-gradient(135deg, #ffcb2b 0%, #f59e0b 100%);
+      border: none;
+      border-radius: 12px;
+      color: #1a1500;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-save-sync:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    }
+
+    .btn-save-sync:active {
+      transform: translateY(1px);
+    }
+
+    .btn-save-sync.synced {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Auto Sync Checkbox */
+    .auto-sync-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 2px;
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .auto-sync-row label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .auto-sync-row input[type="checkbox"] {
+      accent-color: #ffcb2b;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* Links Cards */
+    .source-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .source-box label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 6px;
+    }
+
+    .source-box label .pill {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 5px;
+    }
+
+    .pill-tiktok {
+      background: rgba(254, 44, 85, 0.15);
+      color: #fe2c55;
+      border: 1px solid rgba(254, 44, 85, 0.3);
+    }
+
+    .pill-local {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .input-with-btn {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .input-with-btn input {
+      flex: 1;
+      padding: 7px 9px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #f0f2f8;
+      font-family: monospace;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .input-with-btn button {
+      padding: 7px 11px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .input-with-btn button:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .source-help {
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
     /* Actions Footer */
     .panel-footer {
       display: flex;
       gap: 8px;
-      margin-top: 18px;
-      padding-top: 14px;
+      margin-top: 16px;
+      padding-top: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .action-btn {
       flex: 1;
-      padding: 9px 12px;
-      font-size: 12px;
+      padding: 8px 12px;
+      font-size: 11.5px;
       font-weight: 600;
       border-radius: 10px;
       cursor: pointer;
@@ -327,35 +540,24 @@
       border-color: rgba(255, 255, 255, 0.25);
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #ffcb2b 0%, #e6a817 100%);
-      border: none;
-      color: #1a1500;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      box-shadow: 0 4px 14px rgba(255, 203, 43, 0.35);
-    }
-
-    /* Toast Notification for Copying URL */
+    /* Toast Notification */
     #toast {
       position: absolute;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(30px);
-      background: rgba(20, 24, 34, 0.92);
-      border: 1px solid rgba(255, 203, 43, 0.4);
+      background: rgba(20, 24, 34, 0.94);
+      border: 1px solid rgba(255, 203, 43, 0.45);
       color: #ffffff;
       padding: 10px 18px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
       display: flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      backdrop-filter: blur(14px);
       opacity: 0;
       pointer-events: none;
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -396,6 +598,15 @@
       <div class="panel-header">
         <h2><span class="sparkle">✨</span> Cozy Lighting</h2>
         <span class="shortcut-badge">Press 'C'</span>
+      </div>
+
+      <!-- Live Cloud Sync Status Bar -->
+      <div class="sync-status-bar">
+        <div class="sync-status-indicator">
+          <span class="status-dot connecting" id="sync-dot"></span>
+          <span id="sync-status-text" style="font-weight: 500;">Connecting Cloud...</span>
+        </div>
+        <span class="sync-time-badge" id="sync-time-text">Checking</span>
       </div>
 
       <!-- Color Theme Presets -->
@@ -456,22 +667,51 @@
         <input type="range" id="particle-slider" min="0" max="100" step="5" value="70">
       </div>
 
-      <!-- Local Server Route Display -->
-      <div class="form-group" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-        <label>
-          <span>Local Server Route</span>
-          <span class="val-indicator" style="font-size: 11px; color: #34d399;" id="server-status-pill">● Port 8091</span>
-        </label>
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <input type="text" id="server-route-input" readonly value="http://localhost:8091/overlay/cozy_bg"
-            style="flex: 1; padding: 7px 10px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #f0f2f8; font-family: monospace; font-size: 11.5px; outline: none;">
-          <button id="copy-route-btn" style="padding: 7px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #ffffff; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s ease;">
-            Copy
-          </button>
+      <!-- Real-Time Save & Sync Section -->
+      <div class="save-sync-section">
+        <button class="btn-save-sync" id="save-sync-btn" title="Broadcast settings to TikTok LIVE overlay and all connected instances">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Save & Sync to TikTok Live
+        </button>
+
+        <div class="auto-sync-row">
+          <label for="auto-sync-check">
+            <input type="checkbox" id="auto-sync-check" checked>
+            <span>Live Sync on Slider Change</span>
+          </label>
+          <span style="font-size: 10px; color: #ffcb2b;">Auto-Broadcast</span>
         </div>
-        <p style="font-size: 10.5px; color: rgba(255,255,255,0.45); margin-top: 5px; line-height: 1.3;">
-          Add as OBS Browser Source when Origins Dex is running.
+      </div>
+
+      <!-- TikTok LIVE Studio Hosted URL -->
+      <div class="source-box">
+        <label>
+          <span>TikTok LIVE Studio URL</span>
+          <span class="pill pill-tiktok">Public HTTPS</span>
+        </label>
+        <div class="input-with-btn">
+          <input type="text" id="tiktok-route-input" readonly value="https://genreshinobi.github.io/stream-overlays/">
+          <button id="copy-tiktok-btn">Copy</button>
+        </div>
+        <p class="source-help">
+          Paste in TikTok Studio Browser Source. Settings saved here update live on stream!
         </p>
+      </div>
+
+      <!-- Local Server Route Display -->
+      <div class="source-box" style="border-top: none; padding-top: 8px;">
+        <label>
+          <span>OBS / Local Server Route</span>
+          <span class="pill pill-local">Port 8091</span>
+        </label>
+        <div class="input-with-btn">
+          <input type="text" id="server-route-input" readonly value="http://localhost:8091/overlay/cozy_bg">
+          <button id="copy-route-btn">Copy</button>
+        </div>
       </div>
 
       <!-- Footer Buttons -->
@@ -479,25 +719,21 @@
         <button class="action-btn btn-secondary" id="hide-btn" title="Hide Settings Panel">
           Close
         </button>
-        <button class="action-btn btn-primary" id="copy-url-btn" title="Copy Current URL with Settings">
-          Copy OBS Link
+        <button class="action-btn btn-secondary" id="copy-url-btn" title="Copy Current Direct URL">
+          Copy Link
         </button>
       </div>
     </div>
 
-    <!-- Copied Toast Notification -->
+    <!-- Toast Notification -->
     <div id="toast">
       <span>✨</span>
-      <span id="toast-text">OBS Browser Source URL copied!</span>
+      <span id="toast-text">Settings synced!</span>
     </div>
   </div>
 
   <script>
     // --- Preset Color Palettes ---
-    // Each theme defines:
-    //   bg: Background base hex
-    //   orbs: Array of light orb objects { h, s, l, radiusMin, radiusMax, speedMult }
-    //   particleHue: base hue for floating motes
     const PALETTES = {
       hearth: {
         name: "Warm Hearth",
@@ -575,6 +811,9 @@
 
     // --- State & URL Parameter Configuration ---
     const urlParams = new URLSearchParams(window.location.search);
+    const SYNC_TOPIC = urlParams.get('channel') || localStorage.getItem('cozy_channel') || 'genreshinobi-cozy-stream-overlay';
+    const CLIENT_ID = 'client_' + Math.random().toString(36).substring(2, 10);
+
     const initialTheme = urlParams.get('theme') || localStorage.getItem('cozy_theme') || 'hearth';
     const initialSpeed = parseFloat(urlParams.get('speed')) || parseFloat(localStorage.getItem('cozy_speed')) || 0.7;
     const initialBlur = parseInt(urlParams.get('blur')) || parseInt(localStorage.getItem('cozy_blur')) || 100;
@@ -588,8 +827,13 @@
       blur: initialBlur,
       particleIntensity: initialParticles,
       orbCount: 5,
-      hueCycleRate: 0.012 // Very slow, graceful color evolution
+      hueCycleRate: 0.012
     };
+
+    let autoSyncEnabled = localStorage.getItem('cozy_autosync') !== 'false';
+    let ws = null;
+    let reconnectTimer = null;
+    let debounceTimer = null;
 
     // --- Canvas Setup ---
     const lightCanvas = document.getElementById('light-canvas');
@@ -608,14 +852,12 @@
       width = window.innerWidth;
       height = window.innerHeight;
 
-      // Downscaled rendering resolution for incredible 60fps performance and built-in smooth diffusion
       const dpr = 0.5; 
       lightCanvas.width = Math.round(width * dpr);
       lightCanvas.height = Math.round(height * dpr);
       depthCanvas.width = Math.round(width * dpr);
       depthCanvas.height = Math.round(height * dpr);
 
-      // Particle canvas at 1.0 DPR for crisp floating motes
       particleCanvas.width = width;
       particleCanvas.height = height;
 
@@ -623,7 +865,7 @@
       initParticles();
     }
 
-    // --- Light Orbs System ---
+    // --- Light Orbs System with Smooth Morphing ---
     let orbs = [];
 
     class LightOrb {
@@ -636,13 +878,17 @@
         this.radiusFactor = template.r;
         this.speedMult = template.speed;
 
-        // Lissajous curve parameters for smooth, organic infinite paths
+        this.targetHue = template.h;
+        this.targetSat = template.s;
+        this.targetLight = template.l;
+        this.targetRadiusFactor = template.r;
+        this.targetSpeedMult = template.speed;
+
         this.phaseX = (index * 1.37) + Math.random() * Math.PI;
         this.phaseY = (index * 2.11) + Math.random() * Math.PI;
         this.freqX = 0.28 + (index * 0.08);
         this.freqY = 0.34 + (index * 0.06);
 
-        // Breathing pulse phase
         this.pulsePhase = Math.random() * Math.PI * 2;
         this.pulseSpeed = 0.4 + (index * 0.12);
 
@@ -651,11 +897,29 @@
         this.radius = 200;
       }
 
+      applyTemplate(template) {
+        this.targetHue = template.h;
+        this.targetSat = template.s;
+        this.targetLight = template.l;
+        this.targetRadiusFactor = template.r;
+        this.targetSpeedMult = template.speed;
+      }
+
       update(time, delta) {
+        // Smoothly interpolate towards target values for seamless color morphs
+        const lerpRate = 0.045;
+        let dHue = (this.targetHue - this.baseHue) % 360;
+        if (dHue > 180) dHue -= 360;
+        if (dHue < -180) dHue += 360;
+        this.baseHue = (this.baseHue + dHue * lerpRate + 360) % 360;
+
+        this.sat += (this.targetSat - this.sat) * lerpRate;
+        this.light += (this.targetLight - this.light) * lerpRate;
+        this.radiusFactor += (this.targetRadiusFactor - this.radiusFactor) * lerpRate;
+        this.speedMult += (this.targetSpeedMult - this.speedMult) * lerpRate;
+
         // Organic motion using Lissajous trigonometric paths
         const t = time * 0.00035 * config.speed * this.speedMult;
-        
-        // Centered drift with 40% margin coverage
         const marginX = width * 0.38;
         const marginY = height * 0.42;
 
@@ -667,7 +931,7 @@
         const baseR = Math.max(width, height) * this.radiusFactor;
         this.radius = baseR * (1 + pulse * 0.15);
 
-        // Very slow hue shift so colors evolve over time
+        // Slow hue evolution
         this.currentHue = (this.baseHue + Math.sin(time * 0.0001 * config.hueCycleRate + this.index) * 16 + 360) % 360;
       }
 
@@ -681,9 +945,9 @@
           drawX, drawY, drawRadius
         );
 
-        const colorCore = `hsla(${this.currentHue}, ${this.sat}%, ${this.light + 6}%, 0.95)`;
-        const colorMid  = `hsla(${this.currentHue}, ${this.sat - 6}%, ${this.light}%, 0.55)`;
-        const colorEdge = `hsla(${this.currentHue}, ${this.sat - 12}%, ${this.light - 10}%, 0)`;
+        const colorCore = `hsla(${this.currentHue}, ${Math.max(0, this.sat)}%, ${Math.min(100, this.light + 6)}%, 0.95)`;
+        const colorMid  = `hsla(${this.currentHue}, ${Math.max(0, this.sat - 6)}%, ${this.light}%, 0.55)`;
+        const colorEdge = `hsla(${this.currentHue}, ${Math.max(0, this.sat - 12)}%, ${Math.max(0, this.light - 10)}%, 0)`;
 
         grad.addColorStop(0, colorCore);
         grad.addColorStop(0.35, colorMid);
@@ -700,6 +964,20 @@
       const palette = PALETTES[config.theme] || PALETTES.hearth;
       orbs = palette.orbs.map((template, i) => new LightOrb(i, template));
       document.getElementById('overlay-container').style.backgroundColor = palette.bg;
+    }
+
+    function morphPalette(themeId) {
+      const palette = PALETTES[themeId] || PALETTES.hearth;
+      config.theme = themeId;
+      document.getElementById('overlay-container').style.backgroundColor = palette.bg;
+      
+      if (orbs.length === palette.orbs.length) {
+        palette.orbs.forEach((template, i) => {
+          orbs[i].applyTemplate(template);
+        });
+      } else {
+        initOrbs();
+      }
     }
 
     // --- Cozy Dust Motes / Bokeh Particle System ---
@@ -728,7 +1006,6 @@
         this.y -= this.speedY * (config.speed * 0.7 + 0.3);
         this.x += this.driftX + Math.sin(time * 0.0012 + this.oscOffset) * 0.25;
 
-        // Gentle breathing fade in / fade out
         if (this.fadingIn) {
           this.alpha += this.fadeSpeed;
           if (this.alpha >= this.maxAlpha) {
@@ -778,18 +1055,16 @@
       const lw = lightCanvas.width;
       const lh = lightCanvas.height;
 
-      // Clear layers
       lightCtx.clearRect(0, 0, lw, lh);
       depthCtx.clearRect(0, 0, lw, lh);
       particleCtx.clearRect(0, 0, width, height);
 
-      // Update & Render Light Orbs
+      // Render Light Orbs
       for (let i = 0; i < orbs.length; i++) {
         const orb = orbs[i];
         orb.update(time, delta);
         orb.render(lightCtx, dpr);
         
-        // Render 2 of the prominent orbs to the depth layer for luscious soft falloff
         if (i === 0 || i === 2) {
           orb.render(depthCtx, dpr);
         }
@@ -807,6 +1082,197 @@
       requestAnimationFrame(renderLoop);
     }
 
+    // --- Cloud Synchronization System ---
+    function updateSyncStatus(connected, message) {
+      const dot = document.getElementById('sync-dot');
+      const txt = document.getElementById('sync-status-text');
+      if (dot) {
+        dot.className = 'status-dot ' + (connected ? 'connected' : 'connecting');
+      }
+      if (txt) {
+        txt.textContent = message || (connected ? 'Live Sync Active' : 'Connecting Cloud...');
+      }
+    }
+
+    function updateLastSyncTime() {
+      const timeEl = document.getElementById('sync-time-text');
+      if (timeEl) {
+        const now = new Date();
+        timeEl.textContent = 'Synced ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+    }
+
+    function applyRemoteConfig(remote) {
+      if (!remote) return;
+      
+      if (remote.theme && PALETTES[remote.theme] && remote.theme !== config.theme) {
+        morphPalette(remote.theme);
+      }
+      
+      if (typeof remote.speed === 'number' && !isNaN(remote.speed)) {
+        config.speed = remote.speed;
+      }
+      
+      if (typeof remote.blur === 'number' && !isNaN(remote.blur)) {
+        config.blur = remote.blur;
+        document.documentElement.style.setProperty('--blur-strength', config.blur + 'px');
+      }
+      
+      if (typeof remote.particleIntensity === 'number' && !isNaN(remote.particleIntensity)) {
+        config.particleIntensity = remote.particleIntensity;
+        document.documentElement.style.setProperty('--particle-opacity', (config.particleIntensity / 100) * 0.75);
+        initParticles();
+      }
+      
+      // Cache locally
+      localStorage.setItem('cozy_theme', config.theme);
+      localStorage.setItem('cozy_speed', config.speed);
+      localStorage.setItem('cozy_blur', config.blur);
+      localStorage.setItem('cozy_particles', config.particleIntensity);
+      
+      syncUI();
+      updateLastSyncTime();
+    }
+
+    async function loadLatestSavedConfig() {
+      try {
+        const res = await fetch(`https://ntfy.sh/${SYNC_TOPIC}/json?poll=1`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.trim().split('\n').filter(Boolean);
+        for (let i = lines.length - 1; i >= 0; i--) {
+          try {
+            const item = JSON.parse(lines[i]);
+            if (item.event === 'message' && item.message) {
+              const cfg = JSON.parse(item.message);
+              if (cfg && cfg.action === 'sync_config') {
+                applyRemoteConfig(cfg);
+                break;
+              }
+            }
+          } catch (e) {}
+        }
+      } catch (err) {
+        console.warn("Cloud config poll:", err);
+      }
+    }
+
+    function connectWebSocket() {
+      if (ws) {
+        try { ws.close(); } catch (e) {}
+      }
+      
+      updateSyncStatus(false, "Connecting to Cloud...");
+      
+      try {
+        ws = new WebSocket(`wss://ntfy.sh/${SYNC_TOPIC}/ws`);
+        
+        ws.onopen = () => {
+          updateSyncStatus(true, "Live Sync Active");
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const item = JSON.parse(event.data);
+            if (item.event === 'message' && item.message) {
+              const data = JSON.parse(item.message);
+              if (data && data.action === 'sync_config' && data.clientId !== CLIENT_ID) {
+                applyRemoteConfig(data);
+                showToast(`✨ Synced live: ${PALETTES[data.theme]?.name || data.theme}`);
+              }
+            }
+          } catch (e) {}
+        };
+        
+        ws.onclose = () => {
+          updateSyncStatus(false, "Reconnecting...");
+          clearTimeout(reconnectTimer);
+          reconnectTimer = setTimeout(connectWebSocket, 3500);
+        };
+        
+        ws.onerror = () => {
+          try { ws.close(); } catch (e) {}
+        };
+      } catch (err) {
+        updateSyncStatus(false, "Offline / Reconnecting");
+        clearTimeout(reconnectTimer);
+        reconnectTimer = setTimeout(connectWebSocket, 5000);
+      }
+    }
+
+    async function broadcastConfig(isManualSave = false) {
+      const saveBtn = document.getElementById('save-sync-btn');
+      if (isManualSave && saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<span>⏳</span> Syncing to TikTok Live...`;
+      }
+
+      const payload = {
+        action: 'sync_config',
+        clientId: CLIENT_ID,
+        theme: config.theme,
+        speed: config.speed,
+        blur: config.blur,
+        particleIntensity: config.particleIntensity,
+        timestamp: Date.now()
+      };
+
+      localStorage.setItem('cozy_theme', config.theme);
+      localStorage.setItem('cozy_speed', config.speed);
+      localStorage.setItem('cozy_blur', config.blur);
+      localStorage.setItem('cozy_particles', config.particleIntensity);
+
+      try {
+        const res = await fetch(`https://ntfy.sh/${SYNC_TOPIC}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          updateLastSyncTime();
+          if (isManualSave) {
+            if (saveBtn) {
+              saveBtn.innerHTML = `<span>✅</span> Synced to TikTok Live!`;
+              saveBtn.classList.add('synced');
+              setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.classList.remove('synced');
+                saveBtn.innerHTML = `
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  Save & Sync to TikTok Live
+                `;
+              }, 2000);
+            }
+            showToast("✨ Settings saved & synced to TikTok Live!");
+          }
+        } else {
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch (err) {
+        console.warn("Sync publish error:", err);
+        if (isManualSave) {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `<span>⚠️</span> Retry Sync`;
+          }
+          showToast("⚠️ Could not broadcast. Retrying in background.");
+        }
+      }
+    }
+
+    function queueAutoSync() {
+      if (!autoSyncEnabled) return;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        broadcastConfig(false);
+      }, 250);
+    }
+
     // --- Control Panel & UI Logic ---
     const panel = document.getElementById('control-panel');
     const toggleBtn = document.getElementById('settings-toggle-btn');
@@ -818,7 +1284,13 @@
     const particleSlider = document.getElementById('particle-slider');
     const particleVal = document.getElementById('particle-val');
     const themeButtonsContainer = document.getElementById('theme-buttons');
+    const saveSyncBtn = document.getElementById('save-sync-btn');
+    const autoSyncCheck = document.getElementById('auto-sync-check');
     const copyUrlBtn = document.getElementById('copy-url-btn');
+    const copyTiktokBtn = document.getElementById('copy-tiktok-btn');
+    const copyRouteBtn = document.getElementById('copy-route-btn');
+    const tiktokRouteInput = document.getElementById('tiktok-route-input');
+    const serverRouteInput = document.getElementById('server-route-input');
     const toast = document.getElementById('toast');
 
     function togglePanel() {
@@ -848,9 +1320,9 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      config.theme = themeId;
+      morphPalette(themeId);
       localStorage.setItem('cozy_theme', themeId);
-      initOrbs();
+      queueAutoSync();
     });
 
     // Speed Slider
@@ -858,6 +1330,7 @@
       config.speed = parseFloat(e.target.value);
       speedVal.textContent = config.speed.toFixed(2) + 'x';
       localStorage.setItem('cozy_speed', config.speed);
+      queueAutoSync();
     });
 
     // Blur Slider
@@ -866,6 +1339,7 @@
       blurVal.textContent = config.blur + 'px';
       document.documentElement.style.setProperty('--blur-strength', config.blur + 'px');
       localStorage.setItem('cozy_blur', config.blur);
+      queueAutoSync();
     });
 
     // Particles Slider
@@ -875,11 +1349,26 @@
       document.documentElement.style.setProperty('--particle-opacity', (config.particleIntensity / 100) * 0.75);
       localStorage.setItem('cozy_particles', config.particleIntensity);
       initParticles();
+      queueAutoSync();
     });
 
-    // Initialize UI Elements
+    // Save & Sync button
+    saveSyncBtn.addEventListener('click', () => {
+      broadcastConfig(true);
+    });
+
+    // Auto-sync toggle
+    autoSyncCheck.checked = autoSyncEnabled;
+    autoSyncCheck.addEventListener('change', (e) => {
+      autoSyncEnabled = e.target.checked;
+      localStorage.setItem('cozy_autosync', autoSyncEnabled);
+      if (autoSyncEnabled) {
+        broadcastConfig(false);
+      }
+    });
+
+    // Sync UI with current config
     function syncUI() {
-      // Set active preset button
       document.querySelectorAll('.theme-btn').forEach(b => {
         if (b.getAttribute('data-theme') === config.theme) {
           b.classList.add('active');
@@ -900,21 +1389,26 @@
       document.documentElement.style.setProperty('--particle-opacity', (config.particleIntensity / 100) * 0.75);
     }
 
-    // Local Server Route
-    const serverRouteInput = document.getElementById('server-route-input');
-    const copyRouteBtn = document.getElementById('copy-route-btn');
-    const serverStatusPill = document.getElementById('server-status-pill');
-
-    function updateServerRoute() {
+    // Route updates
+    function updateRoutes() {
       if (window.location.protocol.startsWith('http')) {
         serverRouteInput.value = `${window.location.origin}/overlay/cozy_bg`;
-        if (serverStatusPill) serverStatusPill.textContent = '● Connected';
       } else {
         serverRouteInput.value = 'http://localhost:8091/overlay/cozy_bg';
       }
     }
-    updateServerRoute();
+    updateRoutes();
 
+    // Copy TikTok URL
+    copyTiktokBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(tiktokRouteInput.value).then(() => {
+        showToast("✨ TikTok LIVE Studio URL copied!");
+      }).catch(() => {
+        prompt("Copy TikTok LIVE Studio URL:", tiktokRouteInput.value);
+      });
+    });
+
+    // Copy Local Route
     copyRouteBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(serverRouteInput.value).then(() => {
         showToast("✨ Local Server Route copied!");
@@ -923,16 +1417,15 @@
       });
     });
 
-    // Copy OBS URL Helper
+    // Copy direct URL with parameters
     copyUrlBtn.addEventListener('click', () => {
-      const fullUrl = `${window.location.origin}${window.location.pathname}?theme=${config.theme}&speed=${config.speed}&blur=${config.blur}&particles=${config.particleIntensity}`;
-      const textToCopy = window.location.protocol === 'file:' ? window.location.href : fullUrl;
+      const base = window.location.protocol === 'file:' ? 'https://genreshinobi.github.io/stream-overlays/' : `${window.location.origin}${window.location.pathname}`;
+      const fullUrl = `${base}?theme=${config.theme}&speed=${config.speed}&blur=${config.blur}&particles=${config.particleIntensity}`;
 
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast("✨ OBS Browser Source link copied!");
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast("✨ Direct Browser Source link copied!");
       }).catch(() => {
-        // Fallback
-        prompt("Copy this URL for OBS Browser Source:", textToCopy);
+        prompt("Copy direct URL:", fullUrl);
       });
     });
 
@@ -942,12 +1435,24 @@
       setTimeout(() => toast.classList.remove('show'), 2800);
     }
 
+    // Auto-open panel if requested via query param (e.g. controller view)
+    if (urlParams.get('controls') === '1' || urlParams.get('panel') === '1') {
+      panel.classList.add('open');
+    }
+    if (urlParams.get('hidebtn') === '1') {
+      toggleBtn.style.display = 'none';
+    }
+
     // --- Init ---
     window.addEventListener('resize', resize);
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       syncUI();
       resize();
       requestAnimationFrame(renderLoop);
+
+      // Start cloud synchronization
+      await loadLatestSavedConfig();
+      connectWebSocket();
     });
   </script>
 </body>
